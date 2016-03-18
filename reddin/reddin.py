@@ -12,6 +12,8 @@ from submissions.models import StudentItem as SubmissionsStudent, Submission
 from django.template import Template, Context
 from Crypto.Cipher import AES
 from student.models import user_by_anonymous_id
+from .utils import AESCipher
+import json
 import base64
 
 html_parser = HTMLParser.HTMLParser()
@@ -118,11 +120,7 @@ class ReddinXBlock(XBlock):
             'email': user.email
 
         }
-
-        url_params = urllib.urlencode(data)
-
-        # Input strings must be a multiple of 16 in length
-        if len(url_params) % 16:
-            url_params += "_" * (16 - len(url_params) % 16)
-        cipher = AES.new(self.REDDIT_SECRET_KEY, AES.MODE_ECB)
-        return "?data=" + base64.b64encode(cipher.encrypt(url_params))
+        row = json.dumps(data)
+        ac = AESCipher(self.REDDIT_SECRET_KEY)
+        encoded = ac.encrypt(row)
+        return "?data=" + encoded
