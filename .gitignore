@@ -1,0 +1,17 @@
+# Pycharm
+.idea
+
+venv
+*.pyc
+
+# Packaging files:
+*.eggs
+*.egg-info
+
+# Mac
+.DS_Store
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini

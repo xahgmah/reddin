@@ -1,0 +1,9 @@
+/* CSS for ReddinXBlock */
+
+.reddin_block .count {
+    font-weight: bold;
+}
+
+.reddin_block p {
+    cursor: pointer;
+}
