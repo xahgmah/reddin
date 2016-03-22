@@ -107,12 +107,21 @@ class ReddinXBlock(XBlock):
 
         return {'result': 'success'}
 
+    def is_course_staff(self):
+        # pylint: disable=no-member
+        """
+         Check if user is course staff.
+        """
+        return getattr(self.xmodule_runtime, 'user_is_staff', False)
+
     def get_encoded_data(self, ):
         """
         Collect all data needed and encode it
         Returns: string
 
         """
+        if self.is_course_staff():
+            return ""
         user = user_by_anonymous_id(self.runtime.anonymous_student_id)
         data = {
             'course_id': str(self.course_id),
