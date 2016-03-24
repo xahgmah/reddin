@@ -2,19 +2,16 @@
 
 import pkg_resources
 import HTMLParser
-import urllib
 from xblock.core import XBlock
-from xblock.fields import Scope, Integer
+from xblock.fields import Integer
 from xblock.fragment import Fragment
 from xblock.fields import Scope, String, Dict, Float
 
-from submissions.models import StudentItem as SubmissionsStudent, Submission
+from submissions.models import Submission
 from django.template import Template, Context
-from Crypto.Cipher import AES
 from student.models import user_by_anonymous_id
-from .utils import AESCipher
+from .utils import DESCipher
 import json
-import base64
 
 html_parser = HTMLParser.HTMLParser()
 
@@ -45,7 +42,7 @@ class ReddinXBlock(XBlock):
         help="A simple counter, to show something happening",
     )
 
-    REDDIT_SECRET_KEY = "1234567890123456"
+    REDDIT_SECRET_KEY = "123456789012346"
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -126,10 +123,13 @@ class ReddinXBlock(XBlock):
         data = {
             'course_id': str(self.course_id),
             'username': user.username,
-            'email': user.email
+            'email': user.email,
+            'fullname': "%s %s" % (user.first_name, user.last_name)
 
         }
         row = json.dumps(data)
-        ac = AESCipher(self.REDDIT_SECRET_KEY)
+        print "*"*88
+        print row
+        ac = DESCipher(self.REDDIT_SECRET_KEY)
         encoded = ac.encrypt(row)
         return "?data=" + encoded
