@@ -1,5 +1,6 @@
 """TO-DO: Write a description of what this XBlock is."""
 
+import json
 import pkg_resources
 import HTMLParser
 from xblock.core import XBlock
@@ -7,11 +8,12 @@ from xblock.fields import Integer
 from xblock.fragment import Fragment
 from xblock.fields import Scope, String, Dict, Float
 
-from submissions.models import Submission
 from django.template import Template, Context
+
+from submissions.models import Submission
 from student.models import user_by_anonymous_id
 from .utils import xor_crypt_string
-import json
+from django.conf import settings
 
 html_parser = HTMLParser.HTMLParser()
 
@@ -41,8 +43,6 @@ class ReddinXBlock(XBlock):
         default=0, scope=Scope.user_state,
         help="A simple counter, to show something happening",
     )
-
-    REDDIT_SECRET_KEY = "123456789012346"
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -111,7 +111,7 @@ class ReddinXBlock(XBlock):
         """
         return getattr(self.xmodule_runtime, 'user_is_staff', False)
 
-    def get_encoded_data(self, ):
+    def get_encoded_data(self):
         """
         Collect all data needed and encode it
         Returns: string
@@ -128,5 +128,5 @@ class ReddinXBlock(XBlock):
 
         }
         row = json.dumps(data)
-        encoded = xor_crypt_string(row, self.REDDIT_SECRET_KEY)
+        encoded = xor_crypt_string(row, settings.REDDIT_SECRET_KEY, encode=True)
         return "?data=" + encoded

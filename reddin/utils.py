@@ -30,8 +30,8 @@ def xor_crypt_string(data, key, encode=False, decode=False):
     from itertools import izip, cycle
     import base64
     if decode:
-        data = base64.decodestring(data)
+        data = base64.b64decode(data)
     xored = ''.join(chr(ord(x) ^ ord(y)) for (x, y) in izip(data, cycle(key)))
     if encode:
-        return base64.encodestring(xored).strip()
+        return base64.b64encode(xored).strip()
     return xored
