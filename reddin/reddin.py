@@ -128,5 +128,5 @@ class ReddinXBlock(XBlock):
 
         }
         row = json.dumps(data)
-        encoded = xor_crypt_string(row, settings.REDDIT_SECRET_KEY, encode=True)
+        encoded = xor_crypt_string(row, settings.FEATURES['REDDIT_SECRET_KEY'], encode=True)
         return "?data=" + encoded
