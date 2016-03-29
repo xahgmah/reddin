@@ -10,7 +10,7 @@ from xblock.fields import Scope, String, Dict, Float
 from submissions.models import Submission
 from django.template import Template, Context
 from student.models import user_by_anonymous_id
-from .utils import DESCipher
+from .utils import xor_crypt_string
 import json
 
 html_parser = HTMLParser.HTMLParser()
@@ -128,8 +128,5 @@ class ReddinXBlock(XBlock):
 
         }
         row = json.dumps(data)
-        print "*"*88
-        print row
-        ac = DESCipher(self.REDDIT_SECRET_KEY)
-        encoded = ac.encrypt(row)
+        encoded = xor_crypt_string(row, self.REDDIT_SECRET_KEY)
         return "?data=" + encoded

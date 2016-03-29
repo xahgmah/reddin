@@ -3,6 +3,7 @@ import json
 from Crypto.Cipher import DES3
 import base64
 
+
 class DESCipher:
     def __init__(self, key):
         self.bs = 16
@@ -23,3 +24,14 @@ class DESCipher:
 
     def _unpad(self, s):
         return s[:-ord(s[len(s) - 1:])]
+
+
+def xor_crypt_string(data, key, encode=False, decode=False):
+    from itertools import izip, cycle
+    import base64
+    if decode:
+        data = base64.decodestring(data)
+    xored = ''.join(chr(ord(x) ^ ord(y)) for (x, y) in izip(data, cycle(key)))
+    if encode:
+        return base64.encodestring(xored).strip()
+    return xored
