@@ -1,6 +1,8 @@
 """TO-DO: Write a description of what this XBlock is."""
 
 import json
+import urllib
+
 import pkg_resources
 import HTMLParser
 from xblock.core import XBlock
@@ -12,7 +14,7 @@ from django.template import Template, Context
 
 from submissions.models import Submission
 from student.models import user_by_anonymous_id
-from .utils import xor_crypt_string
+from .utils import AESCipher
 from django.conf import settings
 
 html_parser = HTMLParser.HTMLParser()
@@ -128,5 +130,5 @@ class ReddinXBlock(XBlock):
 
         }
         row = json.dumps(data)
-        encoded = xor_crypt_string(row, settings.FEATURES['REDDIT_SECRET_KEY'], encode=True)
-        return "?data=" + encoded
+        encoded = AESCipher(settings.FEATURES['REDDIT_SECRET_KEY']).encrypt(row)
+        return "?data=" + urllib.quote(encoded)
