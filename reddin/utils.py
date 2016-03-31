@@ -7,10 +7,7 @@ import base64
 class AESCipher:
     def __init__(self, key):
         self.bs = 32
-        if len(key) >= 32:
-            self.key = key[:32]
-        else:
-            self.key = self._pad(key)
+        self.key = key
 
     def encrypt(self, raw):
         raw = self._pad(raw)
