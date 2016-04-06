@@ -76,8 +76,6 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
         Returns: string
 
         """
-        if self.is_course_staff():
-            return ""
         user = self.runtime.service(self, "user")._django_user
         data = {
             'course_id': str(self.course_id),
