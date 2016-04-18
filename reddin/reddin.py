@@ -46,7 +46,7 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
         when viewing courses.
         """
         encoded = self.get_encoded_data()
-        context['url_string'] = self.url + encoded
+        context['url_string'] = self.url + encoded if self.url  else ""
         html = self.render_template("static/html/reddin.html", context)
         frag = Fragment(html.format(self=self))
         return frag
