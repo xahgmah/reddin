@@ -6,7 +6,7 @@ import urllib
 import pkg_resources
 from xblock.core import XBlock
 from xblock.fragment import Fragment
-from xblock.fields import Scope, String
+from xblock.fields import Dict, Scope, String
 
 from django.template import Template, Context
 from django.conf import settings
@@ -14,6 +14,8 @@ from xblockutils.studio_editable import StudioEditableXBlockMixin
 
 from .utils import AESCipher
 
+# Make '_' a no-op so we can scrape strings
+_ = lambda text: text
 
 @XBlock.needs('user')
 class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
@@ -21,19 +23,26 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
     Xblock which render remote content by url in iframe and send crypted student data in GET param.
     """
     display_name = String(
-        help="This name appears in the horizontal navigation at the top of"
-             "the page.",
-        default="Redding XBlcok",
+        display_name=_("Display Name"),
+        help=_("This name appears in the horizontal navigation at the top of the page."),
+        default="Redding XBlock",
         scope=Scope.settings
     )
 
     url = String(
-        help="Reddin URL",
+        display_name=_("Reddin URL"),
         default="",
         scope=Scope.content
     )
 
-    editable_fields = ('display_name', 'url')
+    data_params = Dict(
+        display_name=_("URL Parameters"),
+        help=_('Example: {"name1": "value1", "name2": "value2"}'),
+        default={},
+        scope=Scope.content
+    )
+
+    editable_fields = ('display_name', 'url', 'data_params')
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -46,7 +55,13 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
         when viewing courses.
         """
         encoded = self.get_encoded_data()
-        context['url_string'] = self.url + encoded if self.url  else ""
+        parameters = ''
+        if self.data_params:
+            for key, value in self.data_params.items():
+                parameter = '&{}={}'.format(key, value)
+                parameters += parameter
+
+        context['url_string'] = self.url + encoded + parameters if self.url else ""
         html = self.render_template("static/html/reddin.html", context)
         frag = Fragment(html.format(self=self))
         return frag
