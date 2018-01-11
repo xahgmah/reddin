@@ -25,7 +25,7 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
     display_name = String(
         display_name=_("Display Name"),
         help=_("This name appears in the horizontal navigation at the top of the page."),
-        default="Redding XBlock",
+        default="Reddin XBlock",
         scope=Scope.settings
     )
 
