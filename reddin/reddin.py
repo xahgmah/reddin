@@ -11,6 +11,7 @@ from xblock.fields import Dict, Scope, String
 from django.template import Template, Context
 from django.conf import settings
 from xblockutils.studio_editable import StudioEditableXBlockMixin
+from openedx.core.djangoapps.theming.helpers import get_current_request
 
 from .utils import AESCipher
 
@@ -54,6 +55,9 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
         The primary view of the ReddinXBlock, shown to students
         when viewing courses.
         """
+        if context is None:
+            context = {}
+
         encoded = self.get_encoded_data()
         parameters = ''
         if self.data_params:
@@ -61,7 +65,11 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
                 parameter = '&{}={}'.format(key, value)
                 parameters += parameter
 
-        context['url_string'] = self.url + encoded + parameters if self.url else ""
+        if self.url:
+            context['url_string'] = self.url + encoded + parameters + '&SessionID=' + get_current_request().COOKIES.get(settings.SESSION_COOKIE_NAME)
+        else:
+            context['url_string'] = ''
+
         html = self.render_template("static/html/reddin.html", context)
         frag = Fragment(html.format(self=self))
         return frag
