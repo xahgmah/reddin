@@ -22,7 +22,7 @@ def package_data(pkg, roots):
 
 setup(
     name='reddin-xblock',
-    version='0.2',
+    version='0.3',
     description='reddin XBlock',
     packages=[
         'reddin',
