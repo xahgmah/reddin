@@ -6,7 +6,7 @@ import urllib
 import pkg_resources
 from xblock.core import XBlock
 from xblock.fragment import Fragment
-from xblock.fields import Dict, Scope, String
+from xblock.fields import Boolean, Dict, Scope, String
 
 from django.template import Template, Context
 from django.conf import settings
@@ -43,7 +43,14 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
         scope=Scope.content
     )
 
-    editable_fields = ('display_name', 'url', 'data_params')
+    session_variable = Boolean(
+        display_name=_("Session Variable"),
+        help=_('Add the session variable to the URL.'),
+        default=False,
+        scope=Scope.content
+    )
+
+    editable_fields = ('display_name', 'url', 'data_params', 'session_variable')
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -66,7 +73,9 @@ class ReddinXBlock(StudioEditableXBlockMixin, XBlock):
                 parameters += parameter
 
         if self.url:
-            context['url_string'] = self.url + encoded + parameters + '&SessionID=' + get_current_request().COOKIES.get(settings.SESSION_COOKIE_NAME)
+            context['url_string'] = self.url + encoded + parameters
+            if self.session_variable:
+                context['url_string'] += '&SessionID=' + get_current_request().COOKIES.get(settings.SESSION_COOKIE_NAME)
         else:
             context['url_string'] = ''
 
